@@ -22,4 +22,30 @@ model User {
   role      Role     @default(RESIDENT)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  provider  Provider?
+}
+model Provider {
+
+  id           String   @id @default(cuid())
+
+  userId       String   @unique
+
+  serviceTitle String
+
+  category     String
+
+  experience   String
+
+  phone        String
+
+  address      String
+
+  description  String
+
+  status       String   @default("PENDING")
+
+  createdAt    DateTime @default(now())
+
+  user         User @relation(fields:[userId], references:[id])
+
 }
