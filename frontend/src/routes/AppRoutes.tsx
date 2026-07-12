@@ -37,10 +37,22 @@ import Analytics from "../pages/admin/Analytics";
 import BookingsManagement from "../pages/admin/BookingsManagement";
 import UsersManagement from "../pages/admin/UsersManagement";
 import CommunityManagement from "../pages/admin/CommunityManagement";
-import DisputesManagement from "../pages/admin/DisputesManagement";
 import ProviderRequests from "../pages/admin/ProviderRequests";
 import ProvidersManagement from "../pages/admin/ProvidersManagement";
+import ZoneConfiguration from "../pages/admin/ZoneConfiguration";
 import Settings from "../pages/admin/settings";
+
+// ================= MODERATOR =================
+
+import ModeratorDashboard from "../pages/Moderator/ModeratorDashboard";
+import ModeratorDisputes from "../pages/Moderator/ModeratorDisputes";
+import DisputeDetail from "../pages/Moderator/DisputeDetail";
+import FlaggedContent from "../pages/Moderator/FlaggedContent";
+import ModeratorConversations from "../pages/Moderator/ModeratorConversations";
+import ModeratorProfile from "../pages/Moderator/ModeratorProfile";
+import ModeratorSettings from "../pages/Moderator/ModeratorSettings";
+import ModeratorEditProfile from "../pages/Moderator/ModeratorEditProfile";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -66,10 +78,20 @@ export default function AppRoutes() {
         <Route path="/admin/bookings" element={<BookingsManagement />} />
         <Route path="/admin/users" element={<UsersManagement />} />
         <Route path="/admin/community" element={<CommunityManagement />} />
-        <Route path="/admin/disputes" element={<DisputesManagement />} />
         <Route path="/admin/provider-requests" element={<ProviderRequests />} />
         <Route path="/admin/providers" element={<ProvidersManagement />} />
+        <Route path="/admin/zone-configuration" element={<ZoneConfiguration />} />
         <Route path="/admin/settings" element={<Settings />} />
+
+        {/* Moderator */}
+        <Route path="/moderator-dashboard" element={<ModeratorDashboard />} />
+        <Route path="/moderator/disputes" element={<ModeratorDisputes />} />
+        <Route path="/moderator/disputes/:id" element={<DisputeDetail />} />
+        <Route path="/moderator/flagged-content" element={<FlaggedContent />} />
+        <Route path="/moderator/conversations" element={<ModeratorConversations />} />
+        <Route path="/moderator/profile" element={<ModeratorProfile />} />
+        <Route path="/moderator/settings" element={<ModeratorSettings />} />
+        <Route path="/moderator/edit-profile" element={<ModeratorEditProfile />} />
 
         {/*Provider*/}
         <Route
