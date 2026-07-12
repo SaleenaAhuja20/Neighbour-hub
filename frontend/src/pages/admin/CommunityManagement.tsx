@@ -13,7 +13,6 @@ import {
   FaCheckCircle,
   FaTrash,
   FaFlag,
-  FaExclamationTriangle,
   FaShieldAlt,
 } from "react-icons/fa";
 
@@ -56,9 +55,9 @@ export default function CommunityManagement() {
     
 
 {
-  label: "Disputes",
-  icon: FaExclamationTriangle,
-  path: "/admin/disputes",
+  label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
 },
 
     {

@@ -16,7 +16,6 @@ import {
   FaTrash,
   FaBan,
   FaUnlock,
-  FaExclamationTriangle,
   FaShieldAlt,
 } from "react-icons/fa";
 
@@ -58,9 +57,9 @@ export default function UsersManagement() {
     },
     
 {
-  label: "Disputes",
-  icon: FaExclamationTriangle,
-  path: "/admin/disputes",
+  label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
 },
     {
       label: "Analytics",

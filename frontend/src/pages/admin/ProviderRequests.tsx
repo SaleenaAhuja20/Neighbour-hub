@@ -53,9 +53,9 @@ export default function ProviderRequests() {
       path: "/admin/bookings",
     },
     {
-      label: "Disputes",
-      icon: FaCheckCircle,
-      path: "/admin/disputes",
+      label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
     },
     {
       label: "Analytics",

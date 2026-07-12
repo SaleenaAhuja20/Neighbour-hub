@@ -12,7 +12,6 @@ import {
   FaCrown,
   FaCheckCircle,
   FaSearch,
-  FaExclamationTriangle,
   FaShieldAlt,
 } from "react-icons/fa";
 
@@ -53,9 +52,9 @@ export default function BookingsManagement() {
       path: "/admin/bookings",
       active: true,
     },    {
-      label: "Disputes",
-      icon: FaExclamationTriangle,
-      path: "/admin/disputes",
+      label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
     },
     
     {

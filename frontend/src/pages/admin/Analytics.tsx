@@ -57,9 +57,9 @@ export default function Analytics() {
       path: "/admin/bookings",
     },
     {
-  label: "Disputes",
-  icon: FaExclamationTriangle,
-  path: "/admin/disputes",
+  label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
 },
     {
       label: "Analytics",

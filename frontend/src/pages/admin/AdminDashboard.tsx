@@ -11,7 +11,6 @@ import {
   FaSignOutAlt,
   FaCrown,
   FaShieldAlt,
-  FaExclamationTriangle,
   FaCheckCircle,
 } from "react-icons/fa";
 
@@ -53,9 +52,9 @@ export default function AdminDashboard() {
       path: "/admin/bookings",
     },
     {
-      label: "Disputes",
-      icon: FaExclamationTriangle,
-      path: "/admin/disputes",
+      label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
     },
     {
       label: "Analytics",
@@ -442,7 +441,7 @@ gap-2
 text-[#8FE3C7]
 "
             >
-              <FaExclamationTriangle />
+              <FaShieldAlt />
               Pending Requests
             </div>
 

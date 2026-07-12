@@ -11,7 +11,6 @@ import {
   FaSignOutAlt,
   FaCrown,
   FaCheckCircle,
-  FaExclamationTriangle,
   FaSave,
   FaLock,
   FaShieldAlt,
@@ -54,9 +53,9 @@ export default function Settings() {
       path: "/admin/bookings",
     },
     {
-      label: "Disputes",
-      icon: FaExclamationTriangle,
-      path: "/admin/disputes",
+      label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
     },
     {
       label: "Analytics",

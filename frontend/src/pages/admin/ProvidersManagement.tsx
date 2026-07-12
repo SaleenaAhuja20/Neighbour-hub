@@ -14,7 +14,6 @@ import {
   FaEdit,
   FaTrash,
   FaBan,
-  FaExclamationTriangle,
   FaShieldAlt,
 } from "react-icons/fa";
 
@@ -56,9 +55,9 @@ export default function ProvidersManagement() {
       path: "/admin/bookings",
     },
     {
-      label: "Disputes",
-      icon: FaExclamationTriangle,
-      path: "/admin/disputes",
+      label: "ZoneConfiguratio",
+      icon: FaShieldAlt,
+      path: "/admin/zone-configuration",
     },
     {
       label: "Analytics",
