@@ -11,7 +11,8 @@ import Bookings from "../pages/Bookings";
 import Messages from "../pages/Messages";
 import Notifications from "../pages/Notifications";
 import Profile from "../pages/Profile";
-import EditProfile from "../pages/EditProfile";
+import EditProfile from "../pages/Editprofile";
+
 
 // ================= PROVIDER =================
 
@@ -40,7 +41,7 @@ import CommunityManagement from "../pages/admin/CommunityManagement";
 import ProviderRequests from "../pages/admin/ProviderRequests";
 import ProvidersManagement from "../pages/admin/ProvidersManagement";
 import ZoneConfiguration from "../pages/admin/ZoneConfiguration";
-import Settings from "../pages/admin/settings";
+import Settings from "../pages/admin/Settings";
 
 // ================= MODERATOR =================
 

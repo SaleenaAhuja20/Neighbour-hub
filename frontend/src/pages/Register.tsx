@@ -51,7 +51,7 @@ export default function Register() {
       console.log(response.data);
 
       alert("Account created successfully");
-      navigate("/dashboard");
+      navigate("/");
 
 
     } catch (error: any) {

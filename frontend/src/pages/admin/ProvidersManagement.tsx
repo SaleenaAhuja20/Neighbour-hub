@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 
 import {
   FaHome,
@@ -11,14 +13,12 @@ import {
   FaSignOutAlt,
   FaCrown,
   FaCheckCircle,
-  FaEdit,
-  FaTrash,
-  FaBan,
   FaShieldAlt,
 } from "react-icons/fa";
 
 export default function ProvidersManagement() {
   const navigate = useNavigate();
+  const [providers, setProviders] = useState<any[]>([]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -26,6 +26,27 @@ export default function ProvidersManagement() {
 
     navigate("/");
   };
+
+ const fetchProviders = async () => {
+  console.log("fetchProviders called");
+
+  try {
+    const res = await api.get("/provider");
+
+    console.log("Response:", res);
+
+    setProviders(res.data);
+  } catch (err: any) {
+    console.log("ERROR");
+    console.log(err);
+    console.log(err.response);
+    console.log(err.response?.data);
+  }
+};
+
+  useEffect(() => {
+    fetchProviders();
+  }, []);
 
   const navItems = [
     {
@@ -76,40 +97,14 @@ export default function ProvidersManagement() {
     },
   ];
 
-  const providers = [
-    {
-      id: "#P001",
-      name: "Ahmed Services",
-      owner: "Ahmed Raza",
-      service: "Home Repair",
-      bookings: 245,
-      status: "Active",
-    },
-    {
-      id: "#P002",
-      name: "Clean Pro",
-      owner: "Sara Ahmed",
-      service: "Cleaning",
-      bookings: 180,
-      status: "Active",
-    },
-    {
-      id: "#P003",
-      name: "Green Care",
-      owner: "Usman Ali",
-      service: "Gardening",
-      bookings: 90,
-      status: "Blocked",
-    },
-  ];
 
   return (
     <div className="min-h-screen flex bg-[#F3F4F7]">
 
- {/* SIDEBAR */}
+      {/* SIDEBAR */}
 
-<aside
-className="
+      <aside
+        className="
 fixed
 left-0
 top-0
@@ -123,16 +118,16 @@ justify-between
 z-50
 overflow-y-auto
 "
->
+      >
 
-<div>
+        <div>
 
-<div className="px-7 py-8 border-b border-white/10">
+          <div className="px-7 py-8 border-b border-white/10">
 
-<div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
 
-<span
-className="
+              <span
+                className="
 w-10
 h-10
 rounded-xl
@@ -141,62 +136,62 @@ flex
 items-center
 justify-center
 "
->
-<FaCrown className="text-[#8FE3C7]" />
-</span>
+              >
+                <FaCrown className="text-[#8FE3C7]" />
+              </span>
 
 
-<div>
+              <div>
 
-<p
-className="
+                <p
+                  className="
 text-xs
 uppercase
 tracking-widest
 text-[#8FE3C7]
 font-bold
 "
->
-Premium
-</p>
+                >
+                  Premium
+                </p>
 
 
-<h1
-className="
+                <h1
+                  className="
 text-2xl
 font-black
 "
->
-NeighbourHub
-</h1>
+                >
+                  NeighbourHub
+                </h1>
 
 
-</div>
+              </div>
 
-</div>
-
-
-<p className="text-slate-400 text-sm mt-2">
-Admin Portal
-</p>
+            </div>
 
 
-</div>
+            <p className="text-slate-400 text-sm mt-2">
+              Admin Portal
+            </p>
+
+
+          </div>
 
 
 
-<nav className="mt-6 px-3 space-y-1">
+          <nav className="mt-6 px-3 space-y-1">
 
-{
-navItems.map(({label,icon:Icon,path,active})=>(
+            {
+              navItems.map(({ label, icon: Icon, path, active }) => (
 
-<button
+                <button
 
-key={label}
+                  key={label}
 
-onClick={()=>navigate(path)}
+                  onClick={() => navigate(path)}
 
-className={`
+                  className={`
 w-full
 flex
 items-center
@@ -208,54 +203,53 @@ text-sm
 font-medium
 transition
 
-${
-active
-?
-"bg-white/10 text-white"
-:
-"text-slate-300 hover:bg-white/5"
-}
+${active
+                      ?
+                      "bg-white/10 text-white"
+                      :
+                      "text-slate-300 hover:bg-white/5"
+                    }
 
 `}
 
->
+                >
 
-<Icon
-className={
-active
-?
-"text-[#8FE3C7]"
-:
-"text-slate-400"
-}
-/>
-
-
-{label}
+                  <Icon
+                    className={
+                      active
+                        ?
+                        "text-[#8FE3C7]"
+                        :
+                        "text-slate-400"
+                    }
+                  />
 
 
-</button>
-
-))
-
-}
-
-</nav>
+                  {label}
 
 
-</div>
+                </button>
+
+              ))
+
+            }
+
+          </nav>
 
 
+        </div>
 
 
 
-{/* BOTTOM AREA */}
-
-<div className="p-4 mt-auto">
 
 
-<div
-className="
+        {/* BOTTOM AREA */}
+
+        <div className="p-4 mt-auto">
+
+
+          <div
+            className="
 bg-white/5
 border
 border-white/10
@@ -263,10 +257,10 @@ rounded-xl
 p-4
 mb-3
 "
->
+          >
 
-<div
-className="
+            <div
+              className="
 flex
 items-center
 gap-2
@@ -274,37 +268,37 @@ text-[#8FE3C7]
 text-xs
 font-bold
 "
->
+            >
 
-<FaShieldAlt />
+              <FaShieldAlt />
 
-ADMIN ACCESS
+              ADMIN ACCESS
 
-</div>
+            </div>
 
 
-<p
-className="
+            <p
+              className="
 text-slate-400
 text-xs
 mt-2
 "
->
-Full platform control enabled.
-</p>
+            >
+              Full platform control enabled.
+            </p>
 
 
-</div>
+          </div>
 
 
 
 
 
-<button
+          <button
 
-onClick={logout}
+            onClick={logout}
 
-className="
+            className="
 w-full
 py-3
 rounded-xl
@@ -318,20 +312,20 @@ text-sm
 transition
 "
 
->
+          >
 
-<FaSignOutAlt />
+            <FaSignOutAlt />
 
-Logout
+            Logout
 
-</button>
-
-
-
-</div>
+          </button>
 
 
-</aside>
+
+        </div>
+
+
+      </aside>
       {/* MAIN */}
 
       <main
@@ -364,21 +358,29 @@ gap-5
 "
         >
           <div className="bg-white border rounded-2xl p-6">
-            <p className="text-slate-500">Total Providers</p>
+            <p className="text-slate-500">Total Providers Applications</p>
 
-            <h2 className="text-3xl font-black mt-2">850</h2>
+            <h2 className="text-3xl font-black mt-2">{providers.length}</h2>
           </div>
 
           <div className="bg-white border rounded-2xl p-6">
             <p className="text-slate-500">Active Providers</p>
 
-            <h2 className="text-3xl font-black text-[#2E6F5E] mt-2">820</h2>
+            <h2 className="text-3xl font-black text-[#2E6F5E] mt-2">{
+              providers.filter(
+                (p) => p.status === "APPROVED"
+              ).length
+            }</h2>
           </div>
 
           <div className="bg-white border rounded-2xl p-6">
             <p className="text-slate-500">Blocked Providers</p>
 
-            <h2 className="text-3xl font-black text-red-500 mt-2">30</h2>
+            <h2 className="text-3xl font-black text-red-500 mt-2">{
+              providers.filter(
+                (p) => p.user.status === "BLOCKED"
+              ).length
+            }</h2>
           </div>
         </div>
 
@@ -402,22 +404,21 @@ p-6
                 <th>Service</th>
                 <th>Bookings</th>
                 <th>Status</th>
-                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
               {providers.map((provider) => (
-                <tr key={provider.id} className="border-t text-sm">
-                  <td className="py-4 font-bold">{provider.id}</td>
+                <tr key={provider.id.slice(0,8)} className="border-t text-sm">
+                  <td className="py-4 font-bold">{provider.id.slice(0,8)}</td>
 
-                  <td>{provider.name}</td>
+                  <td>{provider.serviceTitle}</td>
 
-                  <td>{provider.owner}</td>
+                  <td>{provider.user.fullName}</td>
 
-                  <td>{provider.service}</td>
+                  <td>{provider.category}</td>
 
-                  <td>{provider.bookings}</td>
+                  <td>0</td>
 
                   <td>
                     <span
@@ -428,53 +429,15 @@ rounded-full
 text-xs
 font-bold
 
-${
-  provider.status === "Active"
-    ? "bg-green-100 text-green-600"
-    : "bg-red-100 text-red-600"
-}
+${provider.status === "APPROVED"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
+                        }
 
 `}
                     >
                       {provider.status}
                     </span>
-                  </td>
-
-                  <td>
-                    <div className="flex gap-2">
-                      <button
-                        className="
-p-2
-rounded-lg
-bg-blue-50
-text-blue-600
-"
-                      >
-                        <FaEdit />
-                      </button>
-
-                      <button
-                        className="
-p-2
-rounded-lg
-bg-red-50
-text-red-600
-"
-                      >
-                        <FaTrash />
-                      </button>
-
-                      <button
-                        className="
-p-2
-rounded-lg
-bg-yellow-50
-text-yellow-600
-"
-                      >
-                        <FaBan />
-                      </button>
-                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,18 +1,31 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../services/api";
 
 export default function Login() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (!token) return;
+
+    if (user.role === "ADMIN") {
+      navigate("/admin/dashboard");
+    } else if (user.role === "PROVIDER") {
+      navigate("/provider-dashboard");
+    } else {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
-
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,21 +70,32 @@ export default function Login() {
 
       alert("Login successful");
 
-
-      navigate("/dashboard");
+      if (response.data.user.role === "ADMIN") {
+        navigate("/admin/dashboard");
+      }
+      else if (response.data.user.role === "PROVIDER") {
+        navigate("/provider-dashboard");
+      }
+      else {
+        navigate("/dashboard");
+      }
 
 
     } catch (error: any) {
-
       console.log(error.response?.data);
 
-      alert(
-        error.response?.data?.message ||
-        "Invalid email or password"
-      );
-
+      if (
+        error.response?.data?.message ===
+        "Your account has been blocked. Please contact the administrator."
+      ) {
+        alert("❌ Your account has been blocked. Please contact the administrator.");
+      } else {
+        alert(
+          error.response?.data?.message ||
+          "Invalid email or password"
+        );
+      }
     }
-
   };
 
 

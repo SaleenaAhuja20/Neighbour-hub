@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 
 import {
   FaHome,
@@ -16,6 +18,13 @@ import {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const [dashboard, setDashboard] = useState<any>({
+    totalUsers: 0,
+    totalProviders: 0,
+    pendingRequests: 0,
+    latestUsers: [],
+    pendingApplications: [],
+  });
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -23,7 +32,20 @@ export default function AdminDashboard() {
 
     navigate("/");
   };
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
 
+  const fetchDashboard = async () => {
+    try {
+      const res = await api.get("/admin/dashboard");
+
+      setDashboard(res.data);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const navItems = [
     {
       label: "Dashboard",
@@ -73,31 +95,28 @@ export default function AdminDashboard() {
     },
   ];
 
-  const stats = [
-    {
-      title: "Total Users",
-      value: "5,000",
-      icon: FaUsers,
-    },
-
-    {
-      title: "Total Providers",
-      value: "850",
-      icon: FaUserTie,
-    },
-
-    {
-      title: "Total Bookings",
-      value: "12,450",
-      icon: FaClipboardList,
-    },
-
-    {
-      title: "Revenue",
-      value: "Rs. 2.4M",
-      icon: FaChartLine,
-    },
-  ];
+const stats = [
+  {
+    title: "Total Users",
+    value: dashboard.totalUsers,
+    icon: FaUsers,
+  },
+  {
+    title: "Providers",
+    value: dashboard.totalProviders,
+    icon: FaUserTie,
+  },
+  {
+    title: "Pending Requests",
+    value: dashboard.pendingRequests,
+    icon: FaCheckCircle,
+  },
+  {
+    title: "Bookings",
+    value: 0,
+    icon: FaClipboardList,
+  },
+];
 
   const activities = [
     "New provider registration request received",
@@ -452,7 +471,7 @@ font-black
 mt-5
 "
             >
-              24
+             {dashboard.pendingRequests}
             </h2>
 
             <p
@@ -481,55 +500,46 @@ font-semibold
           </div>
         </div>
 
-        {/* ACTIVITY */}
+{/* LATEST USERS */}
 
-        <div
-          className="
-mt-8
-bg-white
-rounded-2xl
-border
-border-slate-200
-p-8
-"
-        >
-          <h2
-            className="
-text-xl
-font-bold
-text-[#111C34]
-"
-          >
-            Recent Activity
-          </h2>
+<div className="mt-8 bg-white rounded-2xl border border-slate-200 p-8">
 
-          <div
-            className="
-mt-5
-space-y-4
-"
-          >
-            {activities.map((item, index) => (
-              <div
-                key={index}
-                className="
-flex
-items-center
-gap-3
-p-4
-rounded-xl
-bg-[#F3F4F7]
-text-sm
-text-slate-600
-"
-              >
-                <FaCheckCircle className="text-[#2E6F5E]" />
+  <h2 className="text-xl font-bold text-[#111C34]">
+    Latest Users
+  </h2>
 
-                {item}
-              </div>
-            ))}
-          </div>
+  <div className="mt-5 space-y-4">
+
+    {dashboard.latestUsers.map((user: any) => (
+
+      <div
+        key={user.id}
+        className="flex justify-between items-center p-4 rounded-xl bg-[#F3F4F7]"
+      >
+
+        <div>
+
+          <h3 className="font-semibold">
+            {user.fullName}
+          </h3>
+
+          <p className="text-sm text-slate-500">
+            {user.email}
+          </p>
+
         </div>
+
+        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
+          {user.role}
+        </span>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
       </main>
     </div>
   );

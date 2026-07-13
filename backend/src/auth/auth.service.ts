@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(
@@ -56,6 +56,14 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
+
+    // 👇 ADD THIS
+    if (user.status === "BLOCKED") {
+      throw new UnauthorizedException(
+        "Your account has been blocked. Please contact the administrator."
+      );
+    }
+
 
     const payload = {
       sub: user.id,

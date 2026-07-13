@@ -14,15 +14,22 @@ enum Role {
   ADMIN
 }
 
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
 model User {
-  id        String   @id @default(cuid())
-  fullName  String
-  email     String   @unique
-  password  String
-  role      Role     @default(RESIDENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  provider  Provider?
+  id         String      @id @default(cuid())
+  fullName   String
+  email      String      @unique
+  password   String
+  role       Role        @default(RESIDENT)
+  status     UserStatus  @default(ACTIVE)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  provider   Provider?
 }
 model Provider {
 
@@ -46,6 +53,6 @@ model Provider {
 
   createdAt    DateTime @default(now())
 
-  user         User @relation(fields:[userId], references:[id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 }

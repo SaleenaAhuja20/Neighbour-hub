@@ -31,19 +31,24 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const fetchApplication = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("/provider/my-application", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setApplication(response.data);
-      } catch {
-        setApplication(null);
-      }
-    };
-    fetchApplication();
-  }, []);
+  const fetchApplication = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await api.get("/provider/my-application", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setApplication(response.data);
+    } catch (error) {
+      setApplication(null);
+    }
+  };
+
+  fetchApplication();
+}, []);
 
   const navItems = [
     { label: "Dashboard", icon: FaHome, path: "/dashboard", active: true },
@@ -211,14 +216,18 @@ export default function Dashboard() {
                   Find Services
                 </button>
 
-                {!application && (
-                  <button
-                    onClick={() => navigate("/become-provider")}
-                    className="px-6 py-3 rounded-xl border border-white/25 text-white font-semibold text-sm hover:bg-white/10 transition-colors"
-                  >
-                    Become Provider
-                  </button>
-                )}
+                {application ? (
+  <button className="hero-btn-outline">
+    Application {application.status}
+  </button>
+) : (
+  <button
+    onClick={() => navigate("/become-provider")}
+    className="hero-btn-outline"
+  >
+    Become Provider
+  </button>
+)}
 
                 {application?.status === "PENDING" && (
                   <button

@@ -47,4 +47,16 @@ async approve(
 ) {
   return this.providerService.approveApplication(id);
 }
+
+@Patch("reject/:id")
+async reject(
+  @Param("id") id: string,
+) {
+  return this.providerService.rejectApplication(id);
+}
+
+@Get()
+getAllProviders() {
+  return this.providerService.getAllProviders();
+}
 }
