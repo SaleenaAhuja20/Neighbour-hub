@@ -143,4 +143,15 @@ async getAllProviders() {
   });
 }
 
+async getApprovedProviders() {
+  return this.prisma.provider.findMany({
+    where: {
+      status: "APPROVED",
+    },
+    include: {
+      user: true,
+    },
+  });
+}
+
 }

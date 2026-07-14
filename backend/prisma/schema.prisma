@@ -30,29 +30,48 @@ model User {
   updatedAt  DateTime    @updatedAt
 
   provider   Provider?
+
+  bookings   Booking[]   @relation("ResidentBookings")
 }
 model Provider {
 
   id           String   @id @default(cuid())
-
   userId       String   @unique
 
   serviceTitle String
-
   category     String
-
   experience   String
-
   phone        String
-
   address      String
-
   description  String
-
   status       String   @default("PENDING")
 
   createdAt    DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  bookings Booking[]
+}
+model Booking {
+  id          String   @id @default(cuid())
+
+  residentId  String
+  resident    User     @relation("ResidentBookings", fields: [residentId], references: [id])
+
+  providerId  String
+  provider    Provider @relation(fields: [providerId], references: [id])
+
+  bookingDate DateTime
+  address     String
+  notes       String?
+
+  status      BookingStatus @default(PENDING)
+
+  createdAt   DateTime @default(now())
+}
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  COMPLETED
+  CANCELLED
 }

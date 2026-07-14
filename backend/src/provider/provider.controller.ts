@@ -59,4 +59,9 @@ async reject(
 getAllProviders() {
   return this.providerService.getAllProviders();
 }
+
+@Get("approved")
+getApprovedProviders() {
+  return this.providerService.getApprovedProviders();
+}
 }
