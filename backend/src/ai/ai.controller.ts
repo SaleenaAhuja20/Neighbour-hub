@@ -31,4 +31,22 @@ export class AiController {
   analyzeSentiment(@Body() dto: AnalyzeSentimentDto) {
     return this.aiService.analyzeSentiment(dto);
   }
+@Post('review')
+review(@Body('text') text: string) {
+  return this.aiService.reviewAnalysis(text);
+}
+
+@Post('match')
+match(@Body() body: any) {
+  return this.aiService.smartMatch(
+    body.requirements,
+    body.providers,
+  );
+}
+
+@Post('enhance')
+enhance(@Body('text') text: string) {
+  return this.aiService.enhanceSimpleDescription(text);
+}
+
 }

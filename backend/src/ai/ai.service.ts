@@ -21,7 +21,10 @@ export class AiService {
    * malformed response) so every feature above it can fall back gracefully
    * instead of crashing the request.
    */
-  private async callLLM(systemPrompt: string, userPrompt: string): Promise<any | null> {
+  private async callLLM(
+    systemPrompt: string,
+    userPrompt: string,
+  ): Promise<any | null> {
     try {
       const response = await this.client.chat.completions.create({
         model: 'gpt-4o',
@@ -127,7 +130,8 @@ ${JSON.stringify(dto.candidates, null, 2)}`;
       return {
         source: 'fallback',
         activated: false,
-        message: 'Not enough reviews yet to generate a trust profile (minimum 3 required).',
+        message:
+          'Not enough reviews yet to generate a trust profile (minimum 3 required).',
       };
     }
 
@@ -157,4 +161,42 @@ reliabilityScore must be an integer between 0 and 100.`;
       reviewCount: dto.reviews.length,
     };
   }
+  // ---------------- Simple Review Analysis ----------------
+reviewAnalysis(text: string) {
+  let score = 0;
+
+  const lowerText = text.toLowerCase();
+
+  if (lowerText.includes('good')) {
+    score += 80;
+  }
+
+  if (lowerText.includes('bad')) {
+    score -= 50;
+  }
+
+  return {
+    sentiment: score >= 50 ? 'POSITIVE' : 'NEGATIVE',
+    score,
+  };
+}
+
+
+smartMatch(
+  requirements: string,
+  providers: any[],
+) {
+  return providers.filter((provider) =>
+    provider.skills.some((skill: string) =>
+      requirements.includes(skill),
+    ),
+  );
+}
+
+// ---------------- Simple Description Enhancer ----------------
+enhanceSimpleDescription(text: string) {
+  return `${text}
+
+Professional service with trusted quality and customer satisfaction.`;
+}
 }
