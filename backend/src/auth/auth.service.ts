@@ -14,12 +14,10 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.usersService.findByEmail(
-      registerDto.email,
-    );
+    const existingUser = await this.usersService.findByEmail(registerDto.email);
 
     if (existingUser) {
       throw new ConflictException('Email already exists');
@@ -58,12 +56,11 @@ export class AuthService {
     }
 
     // 👇 ADD THIS
-    if (user.status === "BLOCKED") {
+    if (user.status === 'BLOCKED') {
       throw new UnauthorizedException(
-        "Your account has been blocked. Please contact the administrator."
+        'Your account has been blocked. Please contact the administrator.',
       );
     }
-
 
     const payload = {
       sub: user.id,
