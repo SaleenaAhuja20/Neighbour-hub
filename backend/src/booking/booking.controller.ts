@@ -114,4 +114,15 @@ export class BookingController {
 getAllBookings() {
     return this.bookingService.getAllBookings();
 }
+
+// ============================
+// Resident views single booking details
+// ============================
+@UseGuards(JwtAuthGuard)
+@Get(':id')
+getBookingById(
+  @Param('id') id: string,
+) {
+  return this.bookingService.getBookingById(id);
+}
 }

@@ -10,7 +10,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 
 @Injectable()
 export class BookingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // ===================================
   // Resident creates booking
@@ -37,10 +37,11 @@ export class BookingService {
         residentId,
         providerId,
         bookingDate: new Date(dto.bookingDate),
+        bookingTime: dto.bookingTime,
         address: dto.address,
         notes: dto.notes,
-        status: 'PENDING',
-      },
+        status: "PENDING"
+      }
     });
   }
 
@@ -225,5 +226,25 @@ export class BookingService {
         status,
       },
     });
+    
   }
+  async getBookingById(id: string) {
+
+  return this.prisma.booking.findUnique({
+
+    where: {
+      id,
+    },
+
+    include: {
+      provider: {
+        include: {
+          user: true,
+        },
+      },
+    },
+
+  });
+
+}
 }

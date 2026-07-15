@@ -251,7 +251,10 @@ export default function Bookings() {
 
                 <div className="mt-5 border-t pt-4">
 
-                  <button className="w-full py-2 rounded-xl bg-[#2E6F5E] text-white font-semibold">
+                  <button
+                    onClick={() => navigate(`/bookings/${booking.id}`)}
+                    className="w-full py-2 rounded-xl bg-[#2E6F5E] text-white font-semibold"
+                  >
                     View Details
                   </button>
 

@@ -7,11 +7,9 @@ import { CreateProviderDto } from './dto/create-provider.dto';
 
 @Injectable()
 export class ProviderService {
-
   constructor(private prisma: PrismaService) {}
 
- async apply(userId: string, dto: CreateProviderDto) {
-
+  async apply(userId: string, dto: CreateProviderDto) {
     const existingApplication = await this.prisma.provider.findUnique({
       where: {
         userId,
@@ -19,19 +17,19 @@ export class ProviderService {
     });
 
     if (existingApplication) {
-      if (existingApplication.status === "PENDING") {
+      if (existingApplication.status === 'PENDING') {
         throw new BadRequestException(
-          "You already have a pending application.",
+          'You already have a pending application.',
         );
       }
 
-      if (existingApplication.status === "APPROVED") {
+      if (existingApplication.status === 'APPROVED') {
         throw new BadRequestException(
-          "You are already an approved provider.",
+          'You are already an approved provider.',
         );
       }
 
-      // status is "REJECTED" — allow reapplying by resetting the same row
+      // Reapply
       return this.prisma.provider.update({
         where: { userId },
         data: {
@@ -41,7 +39,8 @@ export class ProviderService {
           phone: dto.phone,
           address: dto.address,
           description: dto.description,
-          status: "PENDING",
+          serviceFee: dto.serviceFee,
+          status: 'PENDING',
         },
       });
     }
@@ -55,41 +54,36 @@ export class ProviderService {
         phone: dto.phone,
         address: dto.address,
         description: dto.description,
-        status: "PENDING",
+        serviceFee: dto.serviceFee,
+        status: 'PENDING',
       },
     });
-
   }
 
   async getMyApplication(userId: string) {
-
     return this.prisma.provider.findUnique({
       where: {
         userId,
       },
     });
-
   }
 
   async getAllApplications() {
-
     return this.prisma.provider.findMany({
       include: {
         user: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
-
   }
 
   async approveApplication(id: string) {
-
     const application = await this.prisma.provider.update({
       where: { id },
       data: {
-        status: "APPROVED",
+        status: 'APPROVED',
       },
     });
 
@@ -98,60 +92,79 @@ export class ProviderService {
         id: application.userId,
       },
       data: {
-        role: "PROVIDER",
+        role: 'PROVIDER',
       },
     });
 
     return {
-      message: "Application approved successfully",
+      message: 'Application approved successfully',
     };
-
   }
 
   async rejectApplication(id: string) {
+    const application = await this.prisma.provider.update({
+      where: { id },
+      data: {
+        status: 'REJECTED',
+      },
+    });
 
-  const application = await this.prisma.provider.update({
-    where: { id },
-    data: {
-      status: "REJECTED",
-    },
-  });
+    await this.prisma.user.update({
+      where: {
+        id: application.userId,
+      },
+      data: {
+        role: 'RESIDENT',
+      },
+    });
 
-  await this.prisma.user.update({
-    where: {
-      id: application.userId,
-    },
-    data: {
-      role: "RESIDENT",
-    },
-  });
+    return {
+      message: 'Application rejected successfully',
+    };
+  }
 
-  return {
-    message: "Application rejected successfully",
-  };
+  async getAllProviders() {
+    return this.prisma.provider.findMany({
+      include: {
+        user: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 
-}
+  async getApprovedProviders() {
+    return this.prisma.provider.findMany({
+      where: {
+        status: 'APPROVED',
+      },
+      include: {
+        user: true,
+      },
+    });
+  }
 
-async getAllProviders() {
-  return this.prisma.provider.findMany({
-    include: {
-      user: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-}
+  async getProviderById(id: string) {
+    const provider = await this.prisma.provider.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+          },
+        },
+      },
+    });
 
-async getApprovedProviders() {
-  return this.prisma.provider.findMany({
-    where: {
-      status: "APPROVED",
-    },
-    include: {
-      user: true,
-    },
-  });
-}
+    if (!provider) {
+      throw new BadRequestException('Provider not found');
+    }
 
+    return provider;
+  }
 }

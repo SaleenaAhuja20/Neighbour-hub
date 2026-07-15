@@ -449,7 +449,7 @@ export default function Services() {
                 </div>
 
                 <button
-                  onClick={() => navigate(`/Bookings/${provider.id}`)}
+                  onClick={() => navigate(`/book-service/${provider.id}`)}
                   className="w-full mt-6 py-3 rounded-xl bg-[#2E6F5E] text-white font-semibold hover:bg-[#25594c] transition"
                 >
                   Book Service

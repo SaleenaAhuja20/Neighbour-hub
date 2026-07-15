@@ -64,4 +64,9 @@ getAllProviders() {
 getApprovedProviders() {
   return this.providerService.getApprovedProviders();
 }
+
+@Get(":id")
+getProvider(@Param("id") id: string) {
+  return this.providerService.getProviderById(id);
+}
 }

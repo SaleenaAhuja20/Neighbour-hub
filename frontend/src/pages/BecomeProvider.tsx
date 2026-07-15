@@ -12,6 +12,7 @@ export default function BecomeProvider() {
     phone: "",
     address: "",
     description: "",
+    serviceFee: "",
   });
 
   const handleChange = (
@@ -31,11 +32,18 @@ export default function BecomeProvider() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await api.post("/provider/apply", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await api.post(
+        "/provider/apply",
+        {
+          ...formData,
+          serviceFee: Number(formData.serviceFee),
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log(response.data);
 
@@ -131,6 +139,20 @@ export default function BecomeProvider() {
                 className="provider-input"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="font-semibold">Service Fee (PKR)</label>
+
+            <input
+              type="number"
+              name="serviceFee"
+              value={formData.serviceFee}
+              onChange={handleChange}
+              className="provider-input"
+              placeholder="500"
+              min="0"
+            />
           </div>
 
           <div>

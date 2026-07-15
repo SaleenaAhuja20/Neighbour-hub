@@ -8,10 +8,12 @@ import BecomeProvider from "../pages/BecomeProvider";
 import Community from "../pages/Community";
 import Services from "../pages/Services";
 import Bookings from "../pages/Bookings";
+import BookService from "../pages/BookService";
 import Messages from "../pages/Messages";
 import Notifications from "../pages/Notifications";
 import Profile from "../pages/Profile";
 import EditProfile from "../pages/Editprofile";
+import BookingDetails from "../pages/BookingDetails";
 
 
 // ================= PROVIDER =================
@@ -64,9 +66,11 @@ export default function AppRoutes() {
         <Route path="/community" element={<Community />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/book-service/:providerId" element={<BookService />} />
         <Route path="/bookings" element={<Bookings />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/bookings/:id" element={<BookingDetails />} />
          
 
         <Route path="/edit-profile" element={<EditProfile />} />
