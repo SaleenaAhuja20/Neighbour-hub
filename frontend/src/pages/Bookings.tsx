@@ -62,8 +62,6 @@ export default function Bookings() {
       path: "/bookings",
       active: true,
     },
-    { label: "Messages", icon: FaComments, path: "/messages" },
-    { label: "Notifications", icon: FaBell, path: "/notifications" },
     { label: "Profile", icon: FaUserCircle, path: "/profile" },
   ];
 

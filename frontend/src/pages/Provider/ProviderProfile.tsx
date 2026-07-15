@@ -34,11 +34,7 @@ export default function ProviderProfile() {
     { label: "My Services", icon: FaTools, path: "/provider/services" },
     { label: "Add Service", icon: FaPlus, path: "/provider/add-service" },
     { label: "Bookings", icon: FaClipboardList, path: "/provider/bookings" },
-    { label: "Messages", icon: FaComments, path: "/provider/messages" },
-    { label: "Reviews", icon: FaStar, path: "/provider/reviews" },
-    { label: "Earnings", icon: FaWallet, path: "/provider/earnings" },
     { label: "Profile", icon: FaUserCircle, path: "/provider/profile" },
-    { label: "Settings", icon: FaCog, path: "/provider/settings" },
   ];
 
   return (

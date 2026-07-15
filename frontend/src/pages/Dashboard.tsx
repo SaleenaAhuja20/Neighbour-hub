@@ -54,8 +54,6 @@ export default function Dashboard() {
     { label: "Dashboard", icon: FaHome, path: "/dashboard", active: true },
     { label: "Find Services", icon: FaSearch, path: "/services" },
     { label: "My Bookings", icon: FaClipboardList, path: "/bookings" },
-    { label: "Messages", icon: FaComments, path: "/messages" },
-    { label: "Notifications", icon: FaBell, path: "/notifications" },
     { label: "Profile", icon: FaUserCircle, path: "/profile" },
   ];
 

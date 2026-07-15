@@ -151,24 +151,9 @@ export default function UsersManagement() {
       path: "/admin/bookings",
     },
     {
-      label: "Zone Configuration",
-      icon: FaShieldAlt,
-      path: "/admin/zone-configuration",
-    },
-    {
       label: "Analytics",
       icon: FaChartLine,
       path: "/admin/analytics",
-    },
-    {
-      label: "Community",
-      icon: FaBell,
-      path: "/admin/community",
-    },
-    {
-      label: "Settings",
-      icon: FaCog,
-      path: "/admin/settings",
     },
   ];
 

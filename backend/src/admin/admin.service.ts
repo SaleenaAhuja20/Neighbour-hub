@@ -181,4 +181,65 @@ async getAllBookings() {
   }));
 
 }
+
+async getAnalytics() {
+  const totalUsers = await this.prisma.user.count();
+
+  const totalResidents = await this.prisma.user.count({
+    where: {
+      role: "RESIDENT",
+    },
+  });
+
+  const totalProviders = await this.prisma.provider.count({
+    where: {
+      status: "APPROVED",
+    },
+  });
+
+  const totalBookings = await this.prisma.booking.count();
+
+  const pendingBookings = await this.prisma.booking.count({
+    where: {
+      status: "PENDING",
+    },
+  });
+
+  const acceptedBookings = await this.prisma.booking.count({
+    where: {
+      status: "ACCEPTED",
+    },
+  });
+
+  const completedBookings = await this.prisma.booking.count({
+    where: {
+      status: "COMPLETED",
+    },
+  });
+
+  const cancelledBookings = await this.prisma.booking.count({
+    where: {
+      status: "CANCELLED",
+    },
+  });
+
+  const categories = await this.prisma.provider.groupBy({
+    by: ["category"],
+    _count: {
+      category: true,
+    },
+  });
+
+  return {
+    totalUsers,
+    totalResidents,
+    totalProviders,
+    totalBookings,
+    pendingBookings,
+    acceptedBookings,
+    completedBookings,
+    cancelledBookings,
+    categories,
+  };
+}
 }

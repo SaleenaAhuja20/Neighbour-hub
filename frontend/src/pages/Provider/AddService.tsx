@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 import {
   FaHome,
   FaTools,
@@ -31,6 +32,26 @@ export default function AddService() {
     navigate("/");
   };
 
+  useEffect(() => {
+  const fetchService = async () => {
+    try {
+      const { data } = await api.get("/provider/my-service");
+
+      if (data) {
+        setService({
+          title: data.serviceTitle || "",
+          category: data.category || "",
+          price: data.serviceFee?.toString() || "",
+          description: data.description || "",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchService();
+}, []);
   const navItems = [
     { label: "Dashboard", icon: FaHome, path: "/provider-dashboard" },
     { label: "My Services", icon: FaTools, path: "/provider/services" },
@@ -41,11 +62,7 @@ export default function AddService() {
       active: true,
     },
     { label: "Bookings", icon: FaClipboardList, path: "/provider/bookings" },
-    { label: "Messages", icon: FaComments, path: "/provider/messages" },
-    { label: "Reviews", icon: FaStar, path: "/provider/reviews" },
-    { label: "Earnings", icon: FaWallet, path: "/provider/earnings" },
     { label: "Profile", icon: FaUserCircle, path: "/provider/profile" },
-    { label: "Settings", icon: FaCog, path: "/provider/settings" },
   ];
 
   const handleChange = (
@@ -57,13 +74,24 @@ export default function AddService() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    console.log(service);
+  try {
+    await api.patch("/provider/service", {
+      serviceTitle: service.title,
+      category: service.category,
+      serviceFee: Number(service.price),
+      description: service.description,
+    });
 
-    alert("Service Added Successfully");
-  };
+    alert("Service updated successfully");
+    navigate("/provider/services");
+  } catch (error: any) {
+    console.error(error);
+    alert(error.response?.data?.message || "Failed to update service");
+  }
+};
 
   return (
     <div className="min-h-screen flex bg-[#F3F4F7]">

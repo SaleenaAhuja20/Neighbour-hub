@@ -69,16 +69,6 @@ export default function Services() {
       path: "/bookings",
     },
     {
-      label: "Messages",
-      icon: FaComments,
-      path: "/messages",
-    },
-    {
-      label: "Notifications",
-      icon: FaBell,
-      path: "/notifications",
-    },
-    {
       label: "Profile",
       icon: FaUserCircle,
       path: "/profile",

@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 import {
   FaHome,
   FaTools,
@@ -19,12 +21,49 @@ import {
 
 export default function MyServices() {
   const navigate = useNavigate();
+  const [service, setService] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
   };
+
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        const res = await api.get("/provider/my-service");
+        setService(res.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchService();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this service?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await api.delete(`/provider/service/${id}`);
+
+    alert("Service deleted successfully.");
+
+    // Refresh the page
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete service.");
+  }
+};
 
   const navItems = [
     { label: "Dashboard", icon: FaHome, path: "/provider-dashboard" },
@@ -45,67 +84,19 @@ export default function MyServices() {
       path: "/provider/bookings",
     },
     {
-      label: "Messages",
-      icon: FaComments,
-      path: "/provider/messages",
-    },
-    {
-      label: "Reviews",
-      icon: FaStar,
-      path: "/provider/reviews",
-    },
-    {
-      label: "Earnings",
-      icon: FaWallet,
-      path: "/provider/earnings",
-    },
-    {
       label: "Profile",
       icon: FaUserCircle,
       path: "/provider/profile",
     },
-    {
-      label: "Settings",
-      icon: FaCog,
-      path: "/provider/settings",
-    },
   ];
 
-  const services = [
-    {
-      id: 1,
-      title: "Electrician",
-      price: "Rs.2500",
-      status: "Active",
-      bookings: 18,
-      rating: 4.9,
-    },
-    {
-      id: 2,
-      title: "Plumber",
-      price: "Rs.1800",
-      status: "Active",
-      bookings: 11,
-      rating: 4.8,
-    },
-    {
-      id: 3,
-      title: "AC Repair",
-      price: "Rs.3500",
-      status: "Inactive",
-      bookings: 5,
-      rating: 4.7,
-    },
-    {
-      id: 4,
-      title: "Home Cleaning",
-      price: "Rs.4000",
-      status: "Active",
-      bookings: 23,
-      rating: 5.0,
-    },
-  ];
-
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex bg-[#F3F4F7]">
 
@@ -152,11 +143,10 @@ export default function MyServices() {
               <button
                 key={label}
                 onClick={() => navigate(path)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl ${
-                  active
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl ${active
                     ? "bg-white/10"
                     : "hover:bg-white/5 text-slate-300"
-                }`}
+                  }`}
               >
 
                 <Icon />
@@ -237,47 +227,55 @@ export default function MyServices() {
 
         {/* SERVICES */}
 
-        <div className="grid grid-cols-2 gap-6 mt-10">
+        <div className="grid grid-cols-1 gap-6 mt-10">
 
-          {services.map((service) => (
+          {service ? (
 
-            <div
-              key={service.id}
-              className="bg-white rounded-3xl border shadow-sm p-7"
-            >
+            <div className="bg-white rounded-3xl border shadow-sm p-7">
 
               <div className="flex justify-between">
 
                 <h2 className="text-2xl font-black text-[#111C34]">
-                  {service.title}
+
+                  {service.serviceTitle}
+
                 </h2>
 
                 <span
-                  className={`px-4 py-2 rounded-full text-sm ${
-                    service.status === "Active"
+                  className={`px-4 py-2 rounded-full text-sm ${service.status === "APPROVED"
                       ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
+                      : service.status === "PENDING"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
                 >
+
                   {service.status}
+
                 </span>
 
               </div>
 
               <p className="text-3xl font-black text-[#2E6F5E] mt-6">
-                {service.price}
+
+                Rs. {service.serviceFee}
+
               </p>
 
-              <div className="flex justify-between mt-8">
+              <div className="grid grid-cols-3 gap-6 mt-8">
 
                 <div>
 
                   <p className="text-slate-400 text-sm">
-                    Bookings
+
+                    Category
+
                   </p>
 
-                  <h3 className="text-xl font-bold">
-                    {service.bookings}
+                  <h3 className="font-bold">
+
+                    {service.category}
+
                   </h3>
 
                 </div>
@@ -285,48 +283,100 @@ export default function MyServices() {
                 <div>
 
                   <p className="text-slate-400 text-sm">
-                    Rating
+
+                    Experience
+
                   </p>
 
-                  <h3 className="text-xl font-bold">
-                    ⭐ {service.rating}
+                  <h3 className="font-bold">
+
+                    {service.experience}
+
                   </h3>
 
                 </div>
+
+                <div>
+
+                  <p className="text-slate-400 text-sm">
+
+                    Phone
+
+                  </p>
+
+                  <h3 className="font-bold">
+
+                    {service.phone}
+
+                  </h3>
+
+                </div>
+
+              </div>
+
+              <div className="mt-8">
+
+                <p className="font-semibold">
+
+                  Address
+
+                </p>
+
+                <p className="text-slate-600 mt-2">
+
+                  {service.address}
+
+                </p>
+
+              </div>
+
+              <div className="mt-6">
+
+                <p className="font-semibold">
+
+                  Description
+
+                </p>
+
+                <p className="text-slate-600 mt-2">
+
+                  {service.description}
+
+                </p>
 
               </div>
 
               <div className="flex gap-3 mt-8">
+  <button
+    className="flex-1 bg-[#2E6F5E] text-white py-3 rounded-xl"
+    onClick={() => navigate(`/provider/add-service`)}
+  >
+    <FaEdit className="inline mr-2" />
+    Edit
+  </button>
 
-                <button className="flex-1 bg-[#111C34] text-white py-3 rounded-xl">
+  <button
+    className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl"
+    onClick={() => handleDelete(service.id)}
+  >
+    <FaTrash className="inline mr-2" />
+    Delete
+  </button>
+</div>
+            </div>
 
-                  <FaEye className="inline mr-2" />
+          ) : (
 
-                  View
+            <div className="bg-white rounded-3xl p-10 text-center">
 
-                </button>
-
-                <button className="flex-1 bg-[#2E6F5E] text-white py-3 rounded-xl">
-
-                  <FaEdit className="inline mr-2" />
-
-                  Edit
-
-                </button>
-
-                <button className="w-14 bg-red-500 text-white rounded-xl">
-
-                  <FaTrash className="mx-auto" />
-
-                </button>
-
-              </div>
+              No service found.
 
             </div>
 
-          ))}
+          )}
 
         </div>
+
 
       </main>
 

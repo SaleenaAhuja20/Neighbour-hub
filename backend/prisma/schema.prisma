@@ -31,27 +31,23 @@ model Provider {
   description  String
   status       String    @default("PENDING")
   createdAt    DateTime  @default(now())
+  serviceFee   Int       @default(0)
   bookings     Booking[]
-  serviceFee Int @default(0)
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Booking {
-  id         String @id @default(cuid())
-  residentId String
-  providerId String
-
+  id          String        @id @default(cuid())
+  residentId  String
+  providerId  String
   bookingDate DateTime
+  address     String
+  notes       String?
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
   bookingTime String
-
-  address String
-  notes   String?
-
-  status    BookingStatus @default(PENDING)
-  createdAt DateTime      @default(now())
-
-  provider Provider @relation(fields: [providerId], references: [id])
-  resident User     @relation("ResidentBookings", fields: [residentId], references: [id])
+  provider    Provider      @relation(fields: [providerId], references: [id])
+  resident    User          @relation("ResidentBookings", fields: [residentId], references: [id])
 }
 
 enum Role {

@@ -7,7 +7,7 @@ import { CreateProviderDto } from './dto/create-provider.dto';
 
 @Injectable()
 export class ProviderService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async apply(userId: string, dto: CreateProviderDto) {
     const existingApplication = await this.prisma.provider.findUnique({
@@ -167,4 +167,148 @@ export class ProviderService {
 
     return provider;
   }
+
+  async getDashboard(userId: string) {
+    const provider = await this.prisma.provider.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!provider) {
+      throw new Error("Provider not found");
+    }
+
+    const totalBookings = await this.prisma.booking.count({
+      where: {
+        providerId: provider.id,
+      },
+    });
+
+    const pendingBookings = await this.prisma.booking.count({
+      where: {
+        providerId: provider.id,
+        status: "PENDING",
+      },
+    });
+
+    const completedBookings = await this.prisma.booking.count({
+      where: {
+        providerId: provider.id,
+        status: "COMPLETED",
+      },
+    });
+
+    const services = 1; // each provider has one service currently
+
+    const recentBookings = await this.prisma.booking.findMany({
+      where: {
+        providerId: provider.id,
+      },
+      include: {
+        resident: {
+          select: {
+            fullName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+    });
+
+    return {
+      totalBookings,
+      pendingBookings,
+      completedBookings,
+      activeServices: services,
+      recentBookings,
+    };
+  }
+  async getMyService(userId: string) {
+    return this.prisma.provider.findUnique({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async deleteService(id: string) {
+    return this.prisma.provider.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async updateService(userId: string, dto: any) {
+    return this.prisma.provider.update({
+      where: {
+        userId,
+      },
+      data: {
+        serviceTitle: dto.serviceTitle,
+        category: dto.category,
+        serviceFee: dto.serviceFee,
+        description: dto.description,
+      },
+    });
+  }
+
+  async getMyBookings(userId: string) {
+    const provider = await this.prisma.provider.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (!provider) {
+      throw new BadRequestException("Provider not found");
+    }
+
+    return this.prisma.booking.findMany({
+      where: {
+        providerId: provider.id,
+      },
+      include: {
+        resident: {
+          select: {
+            fullName: true,
+            email: true,
+          },
+        },
+        provider: {
+          select: {
+            serviceTitle: true,
+          },
+        },
+      },
+      orderBy: {
+        bookingDate: "desc",
+      },
+    });
+  }
+
+  async acceptBooking(id: string) {
+  return this.prisma.booking.update({
+    where: {
+      id,
+    },
+    data: {
+      status: "ACCEPTED",
+    },
+  });
+}
+
+async rejectBooking(id: string) {
+  return this.prisma.booking.update({
+    where: {
+      id,
+    },
+    data: {
+      status: "CANCELLED",
+    },
+  });
+}
 }

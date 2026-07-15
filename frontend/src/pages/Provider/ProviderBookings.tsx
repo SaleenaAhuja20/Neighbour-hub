@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 import {
   FaHome,
   FaTools,
@@ -25,6 +27,19 @@ export default function ProviderBookings() {
     navigate("/");
   };
 
+  useEffect(() => {
+  const fetchBookings = async () => {
+    try {
+      const { data } = await api.get("/provider/bookings");
+      setBookings(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  fetchBookings();
+}, []);
+
   const navItems = [
     { label: "Dashboard", icon: FaHome, path: "/provider-dashboard" },
     { label: "My Services", icon: FaTools, path: "/provider/services" },
@@ -35,36 +50,42 @@ export default function ProviderBookings() {
       path: "/provider/bookings",
       active: true,
     },
-    { label: "Messages", icon: FaComments, path: "/provider/messages" },
-    { label: "Reviews", icon: FaStar, path: "/provider/reviews" },
-    { label: "Earnings", icon: FaWallet, path: "/provider/earnings" },
     { label: "Profile", icon: FaUserCircle, path: "/provider/profile" },
-    { label: "Settings", icon: FaCog, path: "/provider/settings" },
   ];
 
-  const bookings = [
-    {
-      id: 1,
-      customer: "Ali Khan",
-      service: "Electrician",
-      date: "12 July 2026",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      customer: "Ahmed Raza",
-      service: "Plumbing",
-      date: "14 July 2026",
-      status: "Accepted",
-    },
-    {
-      id: 3,
-      customer: "Sara Ahmed",
-      service: "AC Repair",
-      date: "16 July 2026",
-      status: "Completed",
-    },
-  ];
+  const [bookings, setBookings] = useState<any[]>([]);
+
+  const acceptBooking = async (id: string) => {
+  try {
+    await api.patch(`/provider/booking/${id}/accept`);
+
+    setBookings((prev) =>
+      prev.map((booking) =>
+        booking.id === id
+          ? { ...booking, status: "ACCEPTED" }
+          : booking
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const rejectBooking = async (id: string) => {
+  try {
+    await api.patch(`/provider/booking/${id}/reject`);
+
+    setBookings((prev) =>
+      prev.map((booking) =>
+        booking.id === id
+          ? { ...booking, status: "CANCELLED" }
+          : booking
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   return (
     <div className="min-h-screen flex bg-[#F3F4F7]">
@@ -181,74 +202,81 @@ export default function ProviderBookings() {
 
             </thead>
 
-            <tbody>
+          <tbody>
+  {bookings.length > 0 ? (
+    bookings.map((booking) => (
+      <tr key={booking.id} className="border-b">
 
-              {bookings.map((booking) => (
+        <td className="py-5">
+          {booking.resident.fullName}
+        </td>
 
-                <tr
-                  key={booking.id}
-                  className="border-b"
-                >
+        <td>
+          {booking.provider?.serviceTitle || "Service"}
+        </td>
 
-                  <td className="py-5">
-                    {booking.customer}
-                  </td>
+        <td>
+          {new Date(booking.bookingDate).toLocaleDateString()}
+        </td>
 
-                  <td>
-                    {booking.service}
-                  </td>
+        <td>
+          <span
+            className={`px-4 py-2 rounded-full text-sm ${
+              booking.status === "PENDING"
+                ? "bg-yellow-100 text-yellow-700"
+                : booking.status === "ACCEPTED"
+                ? "bg-green-100 text-green-700"
+                : booking.status === "COMPLETED"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {booking.status}
+          </span>
+        </td>
 
-                  <td>
-                    {booking.date}
-                  </td>
+        <td>
+          {booking.status === "PENDING" ? (
+            <div className="flex gap-2">
+              <button
+                onClick={() => acceptBooking(booking.id)}
+                className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
+              >
+                <FaCheck />
+              </button>
 
-                  <td>
+              <button
+                onClick={() => rejectBooking(booking.id)}
+                className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          ) : (
+            <span
+              className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                booking.status === "ACCEPTED"
+                  ? "bg-green-100 text-green-700"
+                  : booking.status === "COMPLETED"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {booking.status}
+            </span>
+          )}
+        </td>
 
-                    <span
-                      className={`px-4 py-2 rounded-full text-sm ${
-                        booking.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : booking.status === "Accepted"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-blue-100 text-blue-700"
-                      }`}
-                    >
-                      {booking.status}
-                    </span>
-
-                  </td>
-
-                  <td>
-
-                    {booking.status === "Pending" ? (
-
-                      <div className="flex gap-2">
-
-                        <button className="bg-green-600 text-white px-4 py-2 rounded-xl">
-                          <FaCheck />
-                        </button>
-
-                        <button className="bg-red-600 text-white px-4 py-2 rounded-xl">
-                          <FaTimes />
-                        </button>
-
-                      </div>
-
-                    ) : (
-
-                      <button className="bg-[#111C34] text-white px-5 py-2 rounded-xl">
-                        View
-                      </button>
-
-                    )}
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={5} className="text-center py-8 text-slate-500">
+        No bookings found.
+      </td>
+    </tr>
+  )}
+</tbody>
 
           </table>
 
@@ -258,4 +286,5 @@ export default function ProviderBookings() {
 
     </div>
   );
+
 }

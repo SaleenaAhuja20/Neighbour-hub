@@ -1,4 +1,7 @@
- import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
+
 import {
   FaHome,
   FaClipboardList,
@@ -13,6 +16,7 @@ import {
   FaSignOutAlt,
   FaShieldAlt,
   FaCrown,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 export default function ProviderDashboard() {
@@ -20,11 +24,30 @@ export default function ProviderDashboard() {
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
+  const [dashboard, setDashboard] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
   };
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const { data } = await api.get("/provider/dashboard");
+
+        setDashboard(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
 
   const navItems = [
     {
@@ -49,58 +72,40 @@ export default function ProviderDashboard() {
       path: "/provider/bookings",
     },
     {
-      label: "Messages",
-      icon: FaComments,
-      path: "/provider/messages",
-    },
-    {
-      label: "Reviews",
-      icon: FaStar,
-      path: "/provider/reviews",
-    },
-    {
-      label: "Earnings",
-      icon: FaWallet,
-      path: "/provider/earnings",
-    },
-    {
       label: "Profile",
       icon: FaUserCircle,
       path: "/provider/profile",
     },
-    {
-      label: "Settings",
-      icon: FaCog,
-      path: "/provider/settings",
-    },
   ];
 
-  const stats = [
-    {
-      title: "Today's Bookings",
-      value: "08",
-      icon: FaCalendarCheck,
-      color: "bg-blue-100 text-blue-600",
-    },
-    {
-      title: "Active Services",
-      value: "06",
-      icon: FaTools,
-      color: "bg-green-100 text-green-600",
-    },
-    {
-      title: "Monthly Earnings",
-      value: "Rs. 85K",
-      icon: FaWallet,
-      color: "bg-yellow-100 text-yellow-600",
-    },
-    {
-      title: "Rating",
-      value: "4.9",
-      icon: FaStar,
-      color: "bg-pink-100 text-pink-600",
-    },
-  ];
+  const stats = dashboard
+    ? [
+      {
+        title: "Total Bookings",
+        value: dashboard.totalBookings,
+        icon: FaCalendarCheck,
+        color: "bg-blue-100 text-blue-600",
+      },
+      {
+        title: "Active Services",
+        value: dashboard.activeServices,
+        icon: FaTools,
+        color: "bg-green-100 text-green-600",
+      },
+      {
+        title: "Completed",
+        value: dashboard.completedBookings,
+        icon: FaCheckCircle,
+        color: "bg-yellow-100 text-yellow-600",
+      },
+      {
+        title: "Pending",
+        value: dashboard.pendingBookings,
+        icon: FaClipboardList,
+        color: "bg-pink-100 text-pink-600",
+      },
+    ]
+    : [];
 
   const quickActions = [
     {
@@ -125,6 +130,15 @@ export default function ProviderDashboard() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <h2 className="text-2xl font-bold">
+          Loading Dashboard...
+        </h2>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex bg-[#F3F4F7]">
 
@@ -171,11 +185,10 @@ export default function ProviderDashboard() {
               <button
                 key={label}
                 onClick={() => navigate(path)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${
-                  active
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${active
                     ? "bg-white/10 text-white"
                     : "text-slate-300 hover:bg-white/5"
-                }`}
+                  }`}
               >
 
                 <Icon />
@@ -221,7 +234,7 @@ export default function ProviderDashboard() {
 
       {/* MAIN */}
 
-     <main className="flex-1 ml-[270px] p-8">
+      <main className="flex-1 ml-[270px] p-8">
 
         <div className="flex justify-between items-center">
 
@@ -397,7 +410,7 @@ export default function ProviderDashboard() {
           </div>
 
         </div>
-                {/* BOOKINGS + EARNINGS */}
+        {/* BOOKINGS + EARNINGS */}
 
         <div className="grid grid-cols-3 gap-6 mt-10">
 
@@ -422,260 +435,127 @@ export default function ProviderDashboard() {
 
             <div className="space-y-4">
 
-              {[
-                {
-                  customer: "Ali Khan",
-                  service: "Electrician",
-                  date: "Today",
-                  status: "Pending",
-                },
-                {
-                  customer: "Ahmed Raza",
-                  service: "AC Repair",
-                  date: "Tomorrow",
-                  status: "Confirmed",
-                },
-                {
-                  customer: "Sara",
-                  service: "Cleaning",
-                  date: "Monday",
-                  status: "Completed",
-                },
-              ].map((booking) => (
+              {dashboard?.recentBookings?.length > 0 ? (
 
-                <div
-                  key={booking.customer}
-                  className="flex justify-between items-center border rounded-2xl p-5 hover:bg-slate-50 transition"
-                >
+                dashboard.recentBookings.map((booking: any) => (
 
-                  <div>
-
-                    <h3 className="font-bold text-[#111C34]">
-                      {booking.customer}
-                    </h3>
-
-                    <p className="text-sm text-slate-500">
-                      {booking.service}
-                    </p>
-
-                  </div>
-
-                  <div>
-
-                    <p className="font-semibold text-slate-600">
-                      {booking.date}
-                    </p>
-
-                  </div>
-
-                  <span
-                    className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                      booking.status === "Completed"
-                        ? "bg-green-100 text-green-700"
-                        : booking.status === "Confirmed"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
+                  <div
+                    key={booking.id}
+                    className="flex justify-between items-center border rounded-2xl p-5 hover:bg-slate-50 transition"
                   >
-                    {booking.status}
-                  </span>
 
-                </div>
+                    <div>
 
-              ))}
+                      <h3 className="font-bold text-[#111C34]">
+                        {booking.resident.fullName}
+                      </h3>
 
-            </div>
+                      <p className="text-sm text-slate-500">
+                        {booking.provider?.serviceTitle || "Service"}
+                      </p>
 
-          </div>
+                    </div>
 
-          {/* EARNINGS */}
+                    <div>
 
-          <div className="bg-white rounded-3xl border shadow-sm p-8">
+                      <p className="font-semibold text-slate-600">
+                        {new Date(booking.bookingDate).toLocaleDateString()}
+                      </p>
 
-            <h2 className="text-2xl font-black text-[#111C34]">
+                      <p className="text-xs text-slate-400">
+                        {booking.bookingTime}
+                      </p>
 
-              Earnings
+                    </div>
 
-            </h2>
+                    <span
+                      className={`px-4 py-2 rounded-full text-sm font-semibold
 
-            <h1 className="text-5xl font-black text-[#2E6F5E] mt-8">
+          ${booking.status === "COMPLETED"
+                          ? "bg-green-100 text-green-700"
+                          : booking.status === "ACCEPTED"
+                            ? "bg-blue-100 text-blue-700"
+                            : booking.status === "PENDING"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                        }
 
-              Rs. 85,000
-
-            </h1>
-
-            <p className="text-slate-500 mt-2">
-
-              This Month
-
-            </p>
-
-            <div className="mt-10 space-y-5">
-
-              <div className="flex justify-between">
-
-                <span>Total Jobs</span>
-
-                <strong>42</strong>
-
-              </div>
-
-              <div className="flex justify-between">
-
-                <span>Completed</span>
-
-                <strong>39</strong>
-
-              </div>
-
-              <div className="flex justify-between">
-
-                <span>Pending</span>
-
-                <strong>03</strong>
-
-              </div>
-
-              <div className="flex justify-between">
-
-                <span>Cancelled</span>
-
-                <strong>01</strong>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* REVIEWS + TODAY'S SCHEDULE */}
-
-        <div className="grid grid-cols-2 gap-6 mt-8">
-
-          {/* REVIEWS */}
-
-          <div className="bg-white rounded-3xl border shadow-sm p-8">
-
-            <h2 className="text-2xl font-black text-[#111C34] mb-6">
-
-              Latest Reviews
-
-            </h2>
-
-            {[
-              {
-                customer: "Ahmed",
-                review: "Excellent work. Highly recommended.",
-                rating: "★★★★★",
-              },
-              {
-                customer: "Fatima",
-                review: "Very professional and on time.",
-                rating: "★★★★★",
-              },
-              {
-                customer: "Usman",
-                review: "Great service. Will hire again.",
-                rating: "★★★★☆",
-              },
-            ].map((item) => (
-
-              <div
-                key={item.customer}
-                className="border rounded-2xl p-5 mb-4"
-              >
-
-                <div className="flex justify-between items-center">
-
-                  <h3 className="font-bold text-[#111C34]">
-
-                    {item.customer}
-
-                  </h3>
-
-                  <span className="text-yellow-500">
-
-                    {item.rating}
-
-                  </span>
-
-                </div>
-
-                <p className="text-slate-500 mt-3">
-
-                  {item.review}
-
-                </p>
-
-              </div>
-
-            ))}
-
-          </div>
-
-          {/* TODAY SCHEDULE */}
-
-          <div className="bg-white rounded-3xl border shadow-sm p-8">
-
-            <h2 className="text-2xl font-black text-[#111C34] mb-6">
-
-              Today's Schedule
-
-            </h2>
-
-            <div className="space-y-4">
-
-              {[
-                {
-                  time: "09:00 AM",
-                  client: "Ali Khan",
-                },
-                {
-                  time: "11:30 AM",
-                  client: "Ahmed Raza",
-                },
-                {
-                  time: "02:00 PM",
-                  client: "Fatima",
-                },
-                {
-                  time: "05:00 PM",
-                  client: "Usman",
-                },
-              ].map((schedule) => (
-
-                <div
-                  key={schedule.time}
-                  className="bg-slate-50 rounded-2xl p-5 flex justify-between items-center"
-                >
-
-                  <div>
-
-                    <h3 className="font-bold text-[#111C34]">
-
-                      {schedule.client}
-
-                    </h3>
-
-                    <p className="text-sm text-slate-500">
-
-                      Service Appointment
-
-                    </p>
+          `}
+                    >
+                      {booking.status}
+                    </span>
 
                   </div>
 
-                  <span className="font-semibold text-[#2E6F5E]">
+                ))
 
-                    {schedule.time}
+              ) : (
 
-                  </span>
+                <div className="text-center py-8 text-slate-500">
+                  No bookings yet.
+                </div>
+
+              )}
+
+            </div>
+
+            {/* EARNINGS */}
+
+            <div className="bg-white rounded-3xl border shadow-sm p-8">
+
+              <h2 className="text-2xl font-black text-[#111C34]">
+
+                Earnings
+
+              </h2>
+
+              <h1 className="text-5xl font-black text-[#2E6F5E] mt-8">
+
+                Rs. {dashboard?.earnings ?? 0}
+
+              </h1>
+
+              <p className="text-slate-500 mt-2">
+
+                This Month
+
+              </p>
+
+              <div className="mt-10 space-y-5">
+
+                <div className="flex justify-between">
+
+                  <span>Total Jobs</span>
+
+                  <strong>{dashboard?.totalBookings}</strong>
 
                 </div>
 
-              ))}
+                <div className="flex justify-between">
+
+                  <span>Completed</span>
+
+                  <strong>{dashboard?.completedBookings}</strong>
+
+                </div>
+
+                <div className="flex justify-between">
+
+                  <span>Pending</span>
+
+                  <strong>{dashboard?.pendingBookings}</strong>
+
+                </div>
+
+                <div className="flex justify-between">
+
+                  <span>Cancelled</span>
+
+                  <strong>{dashboard?.cancelledBookings}</strong>
+
+                </div>
+
+              </div>
 
             </div>
 

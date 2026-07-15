@@ -57,4 +57,10 @@ cancel(
 async getAllBookings() {
   return this.adminService.getAllBookings();
 }
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles("ADMIN")
+@Get("analytics")
+getAnalytics() {
+  return this.adminService.getAnalytics();
+}
 }

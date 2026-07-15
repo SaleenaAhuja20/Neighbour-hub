@@ -36,16 +36,7 @@ export class BookingController {
     );
   }
 
-  // ============================
-// Resident views single booking details
-// ============================
-@UseGuards(JwtAuthGuard)
-@Get(':id')
-getBookingById(
-  @Param('id') id: string,
-) {
-  return this.bookingService.getBookingById(id);
-}
+
 
   // ============================
   // Resident views own bookings
@@ -127,4 +118,14 @@ getAllBookings() {
 }
 
 
+  // ============================
+// Resident views single booking details
+// ============================
+@UseGuards(JwtAuthGuard)
+@Get(':id')
+getBookingById(
+  @Param('id') id: string,
+) {
+  return this.bookingService.getBookingById(id);
+}
 }
