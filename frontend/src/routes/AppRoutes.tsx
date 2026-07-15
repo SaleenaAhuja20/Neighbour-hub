@@ -5,12 +5,9 @@ import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
 import BecomeProvider from "../pages/BecomeProvider";
-import Community from "../pages/Community";
 import Services from "../pages/Services";
 import Bookings from "../pages/Bookings";
 import BookService from "../pages/BookService";
-import Messages from "../pages/Messages";
-import Notifications from "../pages/Notifications";
 import Profile from "../pages/Profile";
 import EditProfile from "../pages/Editprofile";
 import BookingDetails from "../pages/BookingDetails";
@@ -25,8 +22,6 @@ import EditService from "../pages/Provider/EditService";
 import ProviderBookings from "../pages/Provider/ProviderBookings";
 import ProviderMessages from "../pages/Provider/ProviderMessages";
 import Reviews from "../pages/Provider/Reviews";
-import Availability from "../pages/Provider/Availability";
-import Earnings from "../pages/Provider/Earnings";
 import Portfolio from "../pages/Provider/Portfolio";
 import ProviderProfile from "../pages/Provider/ProviderProfile";
 import ProviderSettings from "../pages/Provider/ProviderSettings";
@@ -62,13 +57,10 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/community" element={<Community />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/services" element={<Services />} />
         <Route path="/book-service/:providerId" element={<BookService />} />
         <Route path="/bookings" element={<Bookings />} />
-        <Route path="/messages" element={<Messages />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/bookings/:id" element={<BookingDetails />} />
          
@@ -134,15 +126,6 @@ export default function AppRoutes() {
         element={<Reviews />}
         />
 
-        <Route
-        path="/provider/availability"
-        element={<Availability />}
-        />
-
-        <Route
-        path="/provider/earnings"
-        element={<Earnings />}
-        />
 
         <Route
         path="/provider/portfolio"
