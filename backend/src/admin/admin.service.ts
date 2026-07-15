@@ -131,4 +131,54 @@ async cancelBooking(id: string) {
     },
   });
 }
+
+async getAllBookings() {
+
+  const bookings = await this.prisma.booking.findMany({
+
+    include:{
+      resident:{
+        select:{
+          fullName:true,
+          email:true
+        }
+      },
+
+      provider:{
+        select:{
+          serviceTitle:true,
+          user:{
+            select:{
+              fullName:true
+            }
+          }
+        }
+      }
+
+    },
+
+    orderBy:{
+      createdAt:"desc"
+    }
+
+  });
+
+
+  return bookings.map((booking)=>({
+
+    id: booking.id,
+
+    customer: booking.resident.fullName,
+
+    service: booking.provider.serviceTitle,
+
+    provider: booking.provider.user.fullName,
+
+    status: booking.status,
+
+    date: booking.bookingDate
+
+  }));
+
+}
 }

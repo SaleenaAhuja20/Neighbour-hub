@@ -41,12 +41,6 @@ export class AdminController {
     return this.adminService.deleteUser(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
-@Get('bookings')
-getBookings() {
-  return this.adminService.getBookings();
-}
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
@@ -55,5 +49,12 @@ cancel(
   @Param('id') id: string,
 ) {
   return this.adminService.cancelBooking(id);
+}
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('ADMIN')
+@Get("bookings")
+async getAllBookings() {
+  return this.adminService.getAllBookings();
 }
 }

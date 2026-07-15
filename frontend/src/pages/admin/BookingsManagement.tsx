@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 
 import {
   FaHome,
@@ -17,6 +19,9 @@ import {
 
 export default function BookingsManagement() {
   const navigate = useNavigate();
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -24,6 +29,44 @@ export default function BookingsManagement() {
 
     navigate("/");
   };
+
+  useEffect(() => {
+
+    const fetchBookings = async () => {
+
+      try {
+
+        const response = await api.get("/admin/bookings");
+
+        setBookings(response.data);
+
+      } catch (error) {
+
+        console.log("Error fetching bookings:", error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+
+    fetchBookings();
+
+  }, []);
+
+  const filteredBookings = bookings.filter((booking) => {
+    const query = search.toLowerCase();
+
+    return (
+      booking.customer.toLowerCase().includes(query) ||
+      booking.provider.toLowerCase().includes(query) ||
+      booking.service.toLowerCase().includes(query) ||
+      booking.status.toLowerCase().includes(query)
+    );
+  });
 
   const navItems = [
     {
@@ -51,12 +94,12 @@ export default function BookingsManagement() {
       icon: FaClipboardList,
       path: "/admin/bookings",
       active: true,
-    },    {
+    }, {
       label: "ZoneConfiguratio",
       icon: FaShieldAlt,
       path: "/admin/zone-configuration",
     },
-    
+
     {
       label: "Analytics",
       icon: FaChartLine,
@@ -74,39 +117,13 @@ export default function BookingsManagement() {
     },
   ];
 
-  const bookings = [
-    {
-      id: "#2451",
-      customer: "Ali Khan",
-      service: "Home Repair",
-      provider: "Ahmed Services",
-      status: "Completed",
-      date: "12 July 2026",
-    },
-    {
-      id: "#2452",
-      customer: "Usman",
-      service: "Cleaning",
-      provider: "Clean Pro",
-      status: "Pending",
-      date: "13 July 2026",
-    },
-    {
-      id: "#2453",
-      customer: "Sara",
-      service: "Gardening",
-      provider: "Green Care",
-      status: "Cancelled",
-      date: "14 July 2026",
-    },
-  ];
 
   return (
     <div className="min-h-screen flex bg-[#F3F4F7]">
-   {/* SIDEBAR */}
+      {/* SIDEBAR */}
 
-<aside
-className="
+      <aside
+        className="
 fixed
 left-0
 top-0
@@ -120,16 +137,16 @@ justify-between
 z-50
 overflow-y-auto
 "
->
+      >
 
-<div>
+        <div>
 
-<div className="px-7 py-8 border-b border-white/10">
+          <div className="px-7 py-8 border-b border-white/10">
 
-<div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
 
-<span
-className="
+              <span
+                className="
 w-10
 h-10
 rounded-xl
@@ -138,62 +155,62 @@ flex
 items-center
 justify-center
 "
->
-<FaCrown className="text-[#8FE3C7]" />
-</span>
+              >
+                <FaCrown className="text-[#8FE3C7]" />
+              </span>
 
 
-<div>
+              <div>
 
-<p
-className="
+                <p
+                  className="
 text-xs
 uppercase
 tracking-widest
 text-[#8FE3C7]
 font-bold
 "
->
-Premium
-</p>
+                >
+                  Premium
+                </p>
 
 
-<h1
-className="
+                <h1
+                  className="
 text-2xl
 font-black
 "
->
-NeighbourHub
-</h1>
+                >
+                  NeighbourHub
+                </h1>
 
 
-</div>
+              </div>
 
-</div>
-
-
-<p className="text-slate-400 text-sm mt-2">
-Admin Portal
-</p>
+            </div>
 
 
-</div>
+            <p className="text-slate-400 text-sm mt-2">
+              Admin Portal
+            </p>
+
+
+          </div>
 
 
 
-<nav className="mt-6 px-3 space-y-1">
+          <nav className="mt-6 px-3 space-y-1">
 
-{
-navItems.map(({label,icon:Icon,path,active})=>(
+            {
+              navItems.map(({ label, icon: Icon, path, active }) => (
 
-<button
+                <button
 
-key={label}
+                  key={label}
 
-onClick={()=>navigate(path)}
+                  onClick={() => navigate(path)}
 
-className={`
+                  className={`
 w-full
 flex
 items-center
@@ -205,54 +222,53 @@ text-sm
 font-medium
 transition
 
-${
-active
-?
-"bg-white/10 text-white"
-:
-"text-slate-300 hover:bg-white/5"
-}
+${active
+                      ?
+                      "bg-white/10 text-white"
+                      :
+                      "text-slate-300 hover:bg-white/5"
+                    }
 
 `}
 
->
+                >
 
-<Icon
-className={
-active
-?
-"text-[#8FE3C7]"
-:
-"text-slate-400"
-}
-/>
-
-
-{label}
+                  <Icon
+                    className={
+                      active
+                        ?
+                        "text-[#8FE3C7]"
+                        :
+                        "text-slate-400"
+                    }
+                  />
 
 
-</button>
-
-))
-
-}
-
-</nav>
+                  {label}
 
 
-</div>
+                </button>
+
+              ))
+
+            }
+
+          </nav>
 
 
+        </div>
 
 
 
-{/* BOTTOM AREA */}
-
-<div className="p-4 mt-auto">
 
 
-<div
-className="
+        {/* BOTTOM AREA */}
+
+        <div className="p-4 mt-auto">
+
+
+          <div
+            className="
 bg-white/5
 border
 border-white/10
@@ -260,10 +276,10 @@ rounded-xl
 p-4
 mb-3
 "
->
+          >
 
-<div
-className="
+            <div
+              className="
 flex
 items-center
 gap-2
@@ -271,37 +287,37 @@ text-[#8FE3C7]
 text-xs
 font-bold
 "
->
+            >
 
-<FaShieldAlt />
+              <FaShieldAlt />
 
-ADMIN ACCESS
+              ADMIN ACCESS
 
-</div>
+            </div>
 
 
-<p
-className="
+            <p
+              className="
 text-slate-400
 text-xs
 mt-2
 "
->
-Full platform control enabled.
-</p>
+            >
+              Full platform control enabled.
+            </p>
 
 
-</div>
+          </div>
 
 
 
 
 
-<button
+          <button
 
-onClick={logout}
+            onClick={logout}
 
-className="
+            className="
 w-full
 py-3
 rounded-xl
@@ -315,20 +331,20 @@ text-sm
 transition
 "
 
->
+          >
 
-<FaSignOutAlt />
+            <FaSignOutAlt />
 
-Logout
+            Logout
 
-</button>
-
-
-
-</div>
+          </button>
 
 
-</aside>
+
+        </div>
+
+
+      </aside>
 
       {/* MAIN CONTENT */}
 
@@ -386,12 +402,15 @@ rounded-xl
               <FaSearch className="text-slate-400" />
 
               <input
+                type="text"
                 placeholder="Search booking..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="
-bg-transparent
-outline-none
-text-sm
-"
+  bg-transparent
+  outline-none
+  text-sm
+  "
               />
             </div>
           </div>
@@ -409,42 +428,44 @@ text-sm
             </thead>
 
             <tbody>
-              {bookings.map((item) => (
-                <tr
-                  key={item.id}
-                  className="
-border-t
-border-slate-100
-text-sm
-"
-                >
-                  <td className="py-4 font-bold">{item.id}</td>
-
-                  <td>{item.customer}</td>
-
-                  <td>{item.service}</td>
-
-                  <td>{item.provider}</td>
-
-                  <td>
-                    <span
-                      className="
-px-3
-py-1
-rounded-full
-bg-[#2E6F5E]/10
-text-[#2E6F5E]
-text-xs
-font-bold
-"
-                    >
-                      {item.status}
-                    </span>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-6">
+                    Loading bookings...
                   </td>
-
-                  <td>{item.date}</td>
                 </tr>
-              ))}
+              ) : filteredBookings.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-6">
+                    No bookings found
+                  </td>
+                </tr>
+              ) : (
+                filteredBookings.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="border-t border-slate-100 text-sm"
+                  >
+                    <td className="py-4 font-bold">
+                      #{item.id.slice(-6)}
+                    </td>
+
+                    <td>{item.customer}</td>
+
+                    <td>{item.service}</td>
+
+                    <td>{item.provider}</td>
+
+                    <td>
+                      <span className="px-3 py-1 rounded-full bg-[#2E6F5E]/10 text-[#2E6F5E] text-xs font-bold">
+                        {item.status}
+                      </span>
+                    </td>
+
+                    <td>{new Date(item.date).toLocaleDateString()}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

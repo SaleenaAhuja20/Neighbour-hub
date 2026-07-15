@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import API from "../api/api";
+import api from "../services/api";
 import {
     FaArrowLeft,
     FaCalendarAlt,
@@ -30,7 +30,7 @@ export default function BookService() {
 
     const fetchProvider = async () => {
         try {
-            const res = await API.get(`/provider/${providerId}`);
+            const res = await api.get(`/provider/${providerId}`);
             setProvider(res.data);
         } catch (err) {
             console.error(err);
@@ -73,7 +73,7 @@ export default function BookService() {
         try {
             const token = localStorage.getItem("token");
 
-            await API.post(
+            await api.post(
                 `/booking/${providerId}`,
                 {
                     bookingDate: booking.date,
